@@ -103,6 +103,7 @@ export default function LoginForm() {
         />
         {showSendEmail && (
           <Button
+            type='button'
             disabled={count > 0 && count < 60}
             onClick={onResendVerificationEmail}
             variant={'link'}

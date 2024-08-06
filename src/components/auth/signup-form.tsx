@@ -129,9 +129,10 @@ export default function SignUpForm() {
         />
         {showSendEmail && (
           <Button
+            type='button'
             disabled={count > 0 && count < 60}
             onClick={onResendVerificationEmail}
-            variant={'link'}
+            variant={'linkHover2'}
           >
             Send verification email {count > 0 && count < 60 && `in ${count}s`}
           </Button>
