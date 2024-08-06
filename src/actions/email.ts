@@ -57,7 +57,7 @@ export const resendVerificationEmail = async (email: string) => {
 
     const createdAt = new Date(existedCode.createdAt)
     const isOneMinuteHasPassed =
-      new Date().getTime() - createdAt.getTime() > 60000 // 1 minute
+      new Date().getTime() - createdAt.getTime() > 120000 // 1 minute -> 2 minute
 
     if (!isOneMinuteHasPassed) {
       return {
