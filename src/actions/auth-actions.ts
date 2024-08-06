@@ -7,6 +7,8 @@ import { hash, verify } from '@node-rs/argon2'
 import { isRedirectError } from 'next/dist/client/components/redirect'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
+import jwt from 'jsonwebtoken'
+import { sendVerificationEmail } from '@/actions/email'
 
 export const signUp = async (values: signUpValues) => {
   try {
@@ -39,7 +41,6 @@ export const signUp = async (values: signUpValues) => {
         error: 'Username is already taken',
       }
     }
-
     const existingEmail = await db.user.findFirst({
       where: {
         email: {
@@ -55,25 +56,36 @@ export const signUp = async (values: signUpValues) => {
       }
     }
 
-    console.log('dsfsad')
-
     const response = await db.user.create({
       data: {
-        username,
-        email,
+        username: username,
+        email: email,
         hashedPassword: passwordHash,
       },
     })
 
-    const session = await lucia.createSession(response.id, {})
-    const sessionCookie = lucia.createSessionCookie(session.id)
-    cookies().set(
-      sessionCookie.name,
-      sessionCookie.value,
-      sessionCookie.attributes
+    const code = Math.floor(Math.random() * 1000_000)
+      .toString()
+      .padStart(6, '0')
+
+    await db.verificationEmail.create({
+      data: {
+        code,
+        userId: response.id,
+      },
+    })
+
+    const token = jwt.sign(
+      { email: email, userId: response.id, code },
+      process.env.JWT_SECRET!,
+      {
+        expiresIn: '5m',
+      }
     )
 
-    redirect('/')
+    const verificationUrl = `${process.env.APP_NAME}/api/verify-email?token=${token}`
+
+    await sendVerificationEmail(email, verificationUrl)
   } catch (error) {
     if (isRedirectError(error)) {
       throw error
@@ -92,21 +104,20 @@ export const login = async (values: loginValues) => {
         error: data.error.errors[0].message,
       }
     }
-    const { username, password } = data.data
+    const { email, password } = data.data
 
     const user = await db.user.findFirst({
       where: {
-        username: {
-          equals: username,
+        email: {
+          equals: email,
           mode: 'insensitive',
         },
       },
     })
 
     if (!user || !user.hashedPassword) {
-      console.log('Invalid username or password')
       return {
-        error: 'Invalid username or password',
+        error: 'Invalid email or password',
       }
     }
 
@@ -119,7 +130,13 @@ export const login = async (values: loginValues) => {
 
     if (!validPassword) {
       return {
-        error: 'Invalid username or password',
+        error: 'Invalid email or password',
+      }
+    }
+
+    if (user.emailVerified === false) {
+      return {
+        error: 'Email is not verified',
       }
     }
 

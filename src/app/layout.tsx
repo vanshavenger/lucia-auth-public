@@ -28,7 +28,7 @@ export default function RootLayout({
         >
           {children}
           <ScrollToTopButton />
-          <Toaster richColors closeButton position='bottom-right' />
+          <Toaster richColors closeButton position='bottom-right' expand />
         </ThemeProvider>
       </body>
     </html>

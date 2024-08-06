@@ -3,7 +3,8 @@ services:
     image: lucia-auth
     build: .
     ports:
-      - "3000:3000"
+      - '3000:3000'
+      - '5555:5555'
     volumes:
       - .:/app
       - /app/node_modules
@@ -16,7 +17,7 @@ services:
   postgres:
     image: postgres:latest
     ports:
-      - "5432:5432"
+      - '5432:5432'
     restart: always
     environment:
       POSTGRES_DB: postgres
@@ -29,6 +30,5 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-
 volumes:
   postgres-data:
