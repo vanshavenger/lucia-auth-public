@@ -20,6 +20,10 @@ import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { useCountdown } from 'usehooks-ts'
 import { Button } from '@/components/ui/button'
+import { onGithubSignInClicked, onGoogleSignInClicked } from '@/queries'
+import { GithubIcon } from '@/components/icons/github'
+
+import { GoogleIcon } from '@/components/icons/google'
 
 export default function SignUpForm() {
   const [count, { startCountdown, stopCountdown, resetCountdown }] =
@@ -42,6 +46,7 @@ export default function SignUpForm() {
   const form = useForm<signUpValues>({
     resolver: zodResolver(signUpSchema),
     defaultValues: {
+      displayName: '',
       email: '',
       username: '',
       password: '',
@@ -73,74 +78,117 @@ export default function SignUpForm() {
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
-        <FormField
-          control={form.control}
-          name='username'
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Username</FormLabel>
-              <FormControl>
-                <Input placeholder='Username' {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
+    <div className='space-y-4 w-full max-w-md mx-auto'>
+      <Button
+        onClick={onGithubSignInClicked}
+        variant='secondary'
+        className='w-full flex items-center justify-center gap-2'
+      >
+        <GithubIcon className='w-5 h-5' />
+        Sign up with GitHub
+      </Button>
+      <Button
+        onClick={onGoogleSignInClicked}
+        variant='secondary'
+        className='w-full flex items-center justify-center gap-2'
+      >
+        <GoogleIcon className='w-5 h-5' />
+        Sign up with Google
+      </Button>
+
+      <div className='relative'>
+        <div className='absolute inset-0 flex items-center'>
+          <span className='w-full border-t' />
+        </div>
+        <div className='relative flex justify-center text-xs uppercase'>
+          <span className='bg-background px-2 text-muted-foreground'>
+            Or continue with
+          </span>
+        </div>
+      </div>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
+          <FormField
+            control={form.control}
+            name='displayName'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Display Name</FormLabel>
+                <FormControl>
+                  <Input placeholder='Vansh Chopra' {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name='username'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Username</FormLabel>
+                <FormControl>
+                  <Input placeholder='Username' {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name='email'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <Input placeholder='example@gmail.com' {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name='password'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Password</FormLabel>
+                <FormControl>
+                  <PasswordInput placeholder='********' {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name='confirmPassword'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Confirm Password</FormLabel>
+                <FormControl>
+                  <PasswordInput placeholder='********' {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          {showSendEmail && (
+            <Button
+              type='button'
+              disabled={count > 0 && count < 60}
+              onClick={onResendVerificationEmail}
+              variant={'linkHover2'}
+            >
+              Send verification email{' '}
+              {count > 0 && count < 60 && `in ${count}s`}
+            </Button>
           )}
-        />
-        <FormField
-          control={form.control}
-          name='email'
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input placeholder='example@gmail.com' {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name='password'
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Password</FormLabel>
-              <FormControl>
-                <PasswordInput placeholder='********' {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name='confirmPassword'
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Confirm Password</FormLabel>
-              <FormControl>
-                <PasswordInput placeholder='********' {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        {showSendEmail && (
-          <Button
-            type='button'
-            disabled={count > 0 && count < 60}
-            onClick={onResendVerificationEmail}
-            variant={'linkHover2'}
-          >
-            Send verification email {count > 0 && count < 60 && `in ${count}s`}
-          </Button>
-        )}
-        <LoadingButton loading={isPending} type='submit' className='w-full'>
-          Create account
-        </LoadingButton>
-      </form>
-    </Form>
+          <LoadingButton loading={isPending} type='submit' className='w-full'>
+            Create account
+          </LoadingButton>
+        </form>
+      </Form>
+    </div>
   )
 }

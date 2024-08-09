@@ -70,12 +70,12 @@ export const github = new GitHub(
   process.env.GITHUB_CLIENT_ID!,
   process.env.GITHUB_CLIENT_SECRET!,
   {
-    redirectURI: `${process.env.APP_NAME}/login/github/callback`,
+    redirectURI: `${process.env.APP_NAME}/api/login/github`,
   }
 )
 
 export const googleAuth = new Google(
   process.env.GOOGLE_CLIENT_ID!,
   process.env.GOOGLE_CLIENT_SECRET!,
-  `${process.env.APP_NAME}/login/google/callback`
+  `${process.env.APP_NAME}/api/login/google`
 )

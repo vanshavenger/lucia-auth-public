@@ -10,16 +10,32 @@ datasource db {
 
 model User {
   id                String              @id @default(cuid())
-  username          String              @unique
-  email             String              @unique
+  username          String?             @unique
+  email             String?              @unique
   emailVerified     Boolean             @default(false)
-  hashedPassword    String
-  googleId          String?             @unique
-  githubId          String?             @unique
+  hashedPassword    String?
   createdAt         DateTime            @default(now())
   updatedAt         DateTime            @updatedAt
+  imageUrl          String?
+  displayName       String?
+  oauthAccounts     OAuthAccount[]
   sessions          Session[]
   VerificationEmail VerificationEmail[]
+
+  @@map("user")
+}
+
+model OAuthAccount {
+  id             String    @id @default(cuid())
+  userId         String
+  provider       String
+  providerUserId String
+  accessToken    String
+  refreshToken   String?
+  expiresAt      DateTime?
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("oauth_account")
 }
 
 model VerificationEmail {
@@ -30,6 +46,7 @@ model VerificationEmail {
   createdAt DateTime @default(now())
 
   @@index([userId])
+  @@map("verification_email")
 }
 
 model Session {
@@ -39,4 +56,5 @@ model Session {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+  @@map("session")
 }

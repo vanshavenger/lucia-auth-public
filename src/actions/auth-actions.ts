@@ -19,7 +19,7 @@ export const signUp = async (values: signUpValues) => {
       }
     }
 
-    const { username, password, email } = data.data
+    const { username, password, email, displayName } = data.data
     const passwordHash = await hash(password, {
       memoryCost: 19456,
       timeCost: 2,
@@ -61,6 +61,7 @@ export const signUp = async (values: signUpValues) => {
         username: username,
         email: email,
         hashedPassword: passwordHash,
+        displayName: displayName,
       },
     })
 

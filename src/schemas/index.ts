@@ -2,6 +2,9 @@ import * as z from 'zod'
 
 export const signUpSchema = z
   .object({
+    displayName: z.string().trim().min(1, {
+      message: 'Display name must be at least 1 characters',
+    }),
     username: z
       .string()
       .trim()
