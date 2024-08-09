@@ -9,7 +9,8 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'Lucia-Auth',
-  description: 'Lucia-Auth template for Next.js with Tailwind CSS by Vansh Chopra.',
+  description:
+    'Lucia-Auth template for Next.js with Tailwind CSS by Vansh Chopra.',
 }
 
 export default function RootLayout({

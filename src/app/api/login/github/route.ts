@@ -126,12 +126,9 @@ export const GET = async (req: NextRequest) => {
       expires: new Date(0),
     })
 
-    return NextResponse.redirect(
-      new URL('/', process.env.APP_NAME),
-      {
-        status: 302,
-      }
-    )
+    return NextResponse.redirect(new URL('/', process.env.APP_NAME), {
+      status: 302,
+    })
   } catch (error: any) {
     return Response.json(
       { error: error.message },
