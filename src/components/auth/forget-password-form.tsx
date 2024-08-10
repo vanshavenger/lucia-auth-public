@@ -16,7 +16,7 @@ import { newPasswordSchema, newPasswordValues } from '@/schemas'
 import { toast } from 'sonner'
 import LoadingButton from '@/components/global/loading-button'
 import { NewPassword } from '@/actions/new-password'
-import { PasswordInput } from '../global/password-input'
+import { PasswordInput } from '@/components/global/password-input'
 
 export const NewPasswordForm = () => {
   const [isPending, startTransition] = useTransition()

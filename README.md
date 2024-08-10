@@ -1,36 +1,109 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Lucia Authentication System
+
+A robust and feature-rich authentication system built with Lucia, offering various authentication methods and security features.
+
+## Features
+
+- **Email Verification**: Secure user registration with email verification.
+- **Multiple OAuth Providers**:
+  - GitHub
+  - Google
+  - Discord
+- **Password Recovery**: Implemented "Forgot Password" functionality.
+- **Magic Link Authentication**: Passwordless login via email.
+- **Custom Lucia Integration**: Built from scratch for maximum flexibility.
+- **Secure Password Hashing**: Utilizes `@node-rs/argon` for efficient and secure password hashing.
+- **Two-Factor Authentication (2FA)**: Coming soon!
+- **Authenticator App Support**: Coming soon!
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- Next Js (v14 or later)
+- npm or yarn or bun or pnpm
+- Postgress
+- Docker (Just the basics)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Installation
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Clone the repository:
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+   ```
+   git clone https://github.com/vanshavenger/lucia-auth-system.git
+   cd lucia-auth-system
+   ```
 
-## Learn More
+2. Install dependencies:
 
-To learn more about Next.js, take a look at the following resources:
+   ```
+   npm install
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+3. Set up environment variables:
+   Create a `.env` file in the root directory and add the following:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+   ```
+    DATABASE_URL='postgresql://postgres:postgres@postgres:5432/postgres'
+    GOOGLE_CLIENT_ID=
+    GOOGLE_CLIENT_SECRET=
+    GITHUB_CLIENT_SECRET=
+    GITHUB_CLIENT_ID=
+    DISCORD_CLIENT_ID=
+    DISCORD_CLIENT_SECRET=
+    APP_NAME='http://localhost:3000'
+    JWT_SECRET=''
+    GMAIL_PASSWORD=
+    GMAIL_USER=
+   ```
 
-## Deploy on Vercel
+   or you can copy .env.sample for starters
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+4. Start the development server:
+   ```
+   docker compose up --build
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## Usage
+
+### Email Verification
+
+After registration, users will receive a verification email. They must click the link in the email to verify their account.
+
+### OAuth Login
+
+Users can log in using their GitHub, Google, or Discord accounts. Click on the respective buttons on the login page.
+
+### Forgot Password
+
+1. Click on the "Forgot Password" link on the login page.
+2. Enter your email address.
+3. Check your email for password reset instructions.
+
+### Magic Link Login
+
+1. On the login page, choose "Login with Magic Link".
+2. Enter your email address.
+3. Check your email for the magic link and click it to log in.
+
+## Security
+
+- Passwords are hashed using `@node-rs/argon` for top-notch security.
+- Two-Factor Authentication (2FA) will be available soon for an extra layer of security.
+
+## Contributing
+
+We welcome contributions!
+
+## License
+
+This project is licensed under the MIT License!
+
+## Acknowledgments
+
+- [Lucia Auth](https://lucia-auth.com/) for the excellent authentication library.
+- All contributors and supporters of this project.
+
+## Contact
+
+For any queries or support, please open an issue in this repository or contact us at vanshchopra101@gmail.com
