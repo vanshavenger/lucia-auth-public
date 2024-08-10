@@ -101,7 +101,7 @@ export const GET = async (req: NextRequest) => {
         const createAccount = await trx.oAuthAccount.create({
           data: {
             accessToken,
-            provider: 'google',
+            provider: 'GOOGLE',
             providerUserId: googleData.id,
             userId: googleData.id,
             refreshToken,

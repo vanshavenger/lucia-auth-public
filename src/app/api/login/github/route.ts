@@ -84,7 +84,7 @@ export const GET = async (req: NextRequest) => {
         const createdOAuthAccount = await trx.oAuthAccount.create({
           data: {
             accessToken,
-            provider: 'github',
+            provider: 'GITHUB',
             providerUserId: githubData.id.toString(),
             userId: githubData.id.toString(),
           },

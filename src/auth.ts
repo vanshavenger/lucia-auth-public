@@ -13,6 +13,7 @@ interface DatabaseAttributes {
   id: string
   imageUrl: string
   username: string
+  role: string
 }
 
 export const lucia = new Lucia(adapter, {
@@ -30,6 +31,7 @@ export const lucia = new Lucia(adapter, {
       email: attributes.email,
       username: attributes.username,
       imageUrl: attributes.imageUrl,
+      role: attributes.role,
     }
   },
 })

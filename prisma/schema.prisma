@@ -9,33 +9,47 @@ datasource db {
 }
 
 model User {
-  id                String                   @id @default(cuid())
-  username          String?                  @unique
-  email             String?                  @unique
-  emailVerified     Boolean                  @default(false)
-  hashedPassword    String?
-  createdAt         DateTime                 @default(now())
-  updatedAt         DateTime                 @updatedAt
-  imageUrl          String?
-  displayName       String?
-  oauthAccounts     OAuthAccount[]
-  sessions          Session[]
-  VerificationEmail VerificationEmail[]
-  twoFactorAuth     TwoFactorAuthentication?
+  id                 String                   @id @default(cuid())
+  username           String?                  @unique
+  email              String?                  @unique
+  emailVerified      Boolean                  @default(false)
+  hashedPassword     String?
+  createdAt          DateTime                 @default(now())
+  updatedAt          DateTime                 @updatedAt
+  imageUrl           String?
+  displayName        String?
+  role               role                     @default(USER)
+  oauthAccounts      OAuthAccount[]
+  sessions           Session[]
+  VerificationEmail  VerificationEmail[]
+  twoFactorAuth      TwoFactorAuthentication?
 
   @@map("user")
 }
 
+enum role {
+  USER
+  ADMIN
+}
+
+enum provideType {
+  GOOGLE
+  DISCORD
+  GITHUB
+}
+
+
 model OAuthAccount {
-  id             String    @id @default(cuid())
+  id             String      @id @default(cuid())
   userId         String
-  provider       String
+  provider       provideType
   providerUserId String
   accessToken    String
   refreshToken   String?
   expiresAt      DateTime?
-  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user           User        @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@index([provider, providerUserId])
   @@map("oauth_account")
 }
 
@@ -56,6 +70,9 @@ model TwoFactorAuthentication {
   secret    String
   createdAt DateTime @default(now())
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("two_factor_authentication")
 }
 
 model Session {

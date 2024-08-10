@@ -71,7 +71,7 @@ export const GET = async (req: NextRequest) => {
             accessToken,
             refreshToken,
             expiresAt: accessTokenExpiresAt,
-            provider: 'discord',
+            provider: 'DISCORD',
             userId: discordData.id.toString(),
             providerUserId: discordData.id.toString(),
           },
