@@ -20,10 +20,15 @@ import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { useCountdown } from 'usehooks-ts'
 import { Button } from '@/components/ui/button'
-import { onGithubSignInClicked, onGoogleSignInClicked } from '@/queries'
+import {
+  onDiscordSignInClicked,
+  onGithubSignInClicked,
+  onGoogleSignInClicked,
+} from '@/queries'
 import { GithubIcon } from '@/components/icons/github'
 
 import { GoogleIcon } from '@/components/icons/google'
+import { DiscordIcon } from '@/components/icons/discord'
 
 export default function SignUpForm() {
   const [count, { startCountdown, stopCountdown, resetCountdown }] =
@@ -79,6 +84,14 @@ export default function SignUpForm() {
 
   return (
     <div className='space-y-4 w-full max-w-md mx-auto'>
+      <Button
+        onClick={onDiscordSignInClicked}
+        variant='secondary'
+        className='w-full flex items-center justify-center gap-2'
+      >
+        <DiscordIcon className='w-5 h-5' />
+        Sign in with Discord
+      </Button>
       <Button
         onClick={onGithubSignInClicked}
         variant='secondary'

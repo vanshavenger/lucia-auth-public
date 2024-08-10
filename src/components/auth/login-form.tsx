@@ -8,7 +8,11 @@ import { toast } from 'sonner'
 
 import { login } from '@/actions/auth-actions'
 import { resendVerificationEmail } from '@/actions/email'
-import { onGithubSignInClicked, onGoogleSignInClicked } from '@/queries'
+import {
+  onDiscordSignInClicked,
+  onGithubSignInClicked,
+  onGoogleSignInClicked,
+} from '@/queries'
 import { loginSchema, loginValues } from '@/schemas'
 
 import LoadingButton from '@/components/global/loading-button'
@@ -25,6 +29,7 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { GithubIcon } from '@/components/icons/github'
 import { GoogleIcon } from '@/components/icons/google'
+import { DiscordIcon } from '@/components/icons/discord'
 
 export default function LoginForm() {
   const [count, { startCountdown, stopCountdown, resetCountdown }] =
@@ -79,6 +84,14 @@ export default function LoginForm() {
 
   return (
     <div className='space-y-6 w-full max-w-md mx-auto'>
+      <Button
+        onClick={onDiscordSignInClicked}
+        variant='secondary'
+        className='w-full flex items-center justify-center gap-2'
+      >
+        <DiscordIcon className='w-5 h-5' />
+        Sign in with Discord
+      </Button>
       <Button
         onClick={onGithubSignInClicked}
         variant='secondary'

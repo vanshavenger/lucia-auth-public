@@ -1,4 +1,4 @@
-import { GitHub, Google } from 'arctic'
+import { Discord, GitHub, Google } from 'arctic'
 import { Lucia, User, Session, TimeSpan } from 'lucia'
 import { PrismaAdapter } from '@lucia-auth/adapter-prisma'
 import { cookies } from 'next/headers'
@@ -78,4 +78,10 @@ export const googleAuth = new Google(
   process.env.GOOGLE_CLIENT_ID!,
   process.env.GOOGLE_CLIENT_SECRET!,
   `${process.env.APP_NAME}/api/login/google`
+)
+
+export const discord = new Discord(
+  process.env.DISCORD_CLIENT_ID!,
+  process.env.DISCORD_CLIENT_SECRET!,
+  `${process.env.APP_NAME}/api/login/discord`
 )
