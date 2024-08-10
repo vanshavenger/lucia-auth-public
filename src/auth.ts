@@ -7,6 +7,14 @@ import db from '@/lib/db'
 
 const adapter = new PrismaAdapter(db.session, db.user)
 
+interface DatabaseAttributes {
+  displayName: string
+  email: string
+  id: string
+  imageUrl: string
+  username: string
+}
+
 export const lucia = new Lucia(adapter, {
   sessionExpiresIn: new TimeSpan(2, 'w'),
   sessionCookie: {
@@ -18,6 +26,10 @@ export const lucia = new Lucia(adapter, {
   getUserAttributes: (attributes) => {
     return {
       id: attributes.id,
+      displayName: attributes.displayName,
+      email: attributes.email,
+      username: attributes.username,
+      imageUrl: attributes.imageUrl,
     }
   },
 })
@@ -59,9 +71,7 @@ export const validateRequest = async (): Promise<
 declare module 'lucia' {
   interface Register {
     Lucia: typeof lucia
-    DatabaseUserAttributes: {
-      id: String
-    }
+    DatabaseUserAttributes: DatabaseAttributes
     UserId: String
   }
 }
