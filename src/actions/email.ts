@@ -3,6 +3,7 @@
 import db from '@/lib/db'
 import { sendEmail } from '@/lib/email'
 import jwt from 'jsonwebtoken'
+import { generateId } from 'lucia'
 
 export async function sendVerificationEmail(
   email: string,
@@ -101,4 +102,43 @@ export const resendVerificationEmail = async (email: string) => {
       error: error?.message,
     }
   }
+}
+
+export async function sendMagicLinkEmail(email: string, url: string) {
+  const subject = '✨ Your Magical Gateway Awaits!'
+  const text = `
+Greetings, esteemed user!
+
+A world of wonder is just one click away. Your personal magic portal has arrived:
+
+${url}
+
+Tap into the extraordinary - your adventure begins now!
+
+Best regards,
+The Acme Enchantment Team
+  `
+  const html = `
+<html>
+  <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+    <h2 style="color: #4a90e2;">Greetings, esteemed user! ✨</h2>
+    <p>A world of wonder is just one click away. Your personal magic portal has arrived:</p>
+    <p style="text-align: center;">
+      <a href="${url}" style="display: inline-block; padding: 10px 20px; background-color: #4a90e2; color: white; text-decoration: none; border-radius: 5px;">Open Your Magic Portal</a>
+    </p>
+    <p>Tap into the extraordinary - your adventure begins now!</p>
+    <p>Best regards,<br>The Acme Enchantment Team</p>
+  </body>
+</html>
+  `
+
+  await sendEmail({
+    to: email,
+    subject,
+    text,
+    html,
+    headers: {
+      'X-Entity-Ref-ID': generateId(10), // Assuming you have this function
+    },
+  })
 }

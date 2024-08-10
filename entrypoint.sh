@@ -6,6 +6,7 @@ npx prisma generate
 
 # Run database migrations
 npx prisma migrate dev --name init 
+npm install @node-rs/argon2-linux-arm64-musl
 
 # Run the main container command
 exec "$@"

@@ -9,20 +9,21 @@ datasource db {
 }
 
 model User {
-  id                 String                   @id @default(cuid())
-  username           String?                  @unique
-  email              String?                  @unique
-  emailVerified      Boolean                  @default(false)
-  hashedPassword     String?
-  createdAt          DateTime                 @default(now())
-  updatedAt          DateTime                 @updatedAt
-  imageUrl           String?
-  displayName        String?
-  role               role                     @default(USER)
-  oauthAccounts      OAuthAccount[]
-  sessions           Session[]
-  VerificationEmail  VerificationEmail[]
-  twoFactorAuth      TwoFactorAuthentication?
+  id                String                   @id @default(cuid())
+  username          String?                  @unique
+  email             String?                  @unique
+  emailVerified     Boolean                  @default(false)
+  hashedPassword    String?
+  createdAt         DateTime                 @default(now())
+  updatedAt         DateTime                 @updatedAt
+  imageUrl          String?
+  displayName       String?
+  role              role                     @default(USER)
+  magicLinks        MagicLink[]
+  oauthAccounts     OAuthAccount[]
+  sessions          Session[]
+  VerificationEmail VerificationEmail[]
+  twoFactorAuth     TwoFactorAuthentication?
 
   @@map("user")
 }
@@ -37,7 +38,6 @@ enum provideType {
   DISCORD
   GITHUB
 }
-
 
 model OAuthAccount {
   id             String      @id @default(cuid())
@@ -83,4 +83,15 @@ model Session {
 
   @@index([userId])
   @@map("session")
+}
+
+model MagicLink {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String
+  expiresAt DateTime
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("magic_link")
 }

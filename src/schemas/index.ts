@@ -75,3 +75,43 @@ export const loginSchema = z.object({
 })
 
 export type loginValues = z.infer<typeof loginSchema>
+
+export const forgetPasswordSchema = z
+  .object({
+    password: z.string().trim().min(1, {
+      message: 'Password is required.',
+    }),
+    confirmPassword: z.string().trim(),
+    newPassword: z
+      .string()
+      .trim()
+      .superRefine((password, ctx) => {
+        const failedRequirements = passwordRequirements.filter(
+          (requirement) => !requirement.regex.test(password)
+        )
+
+        failedRequirements.forEach((requirement) => {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: requirement.message,
+          })
+        })
+      }),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: 'Passwords do not match',
+    path: ['confirmPassword'],
+  })
+  .refine((data) => data.newPassword !== data.password, {
+    message: 'New password must be different from the current password',
+    path: ['newPassword'],
+  })
+export type forgetPasswordValues = z.infer<typeof forgetPasswordSchema>
+
+export const magicLinkSchema = z.object({
+  email: z.string().trim().email({
+    message: 'Invalid email address',
+  }),
+})
+
+export type magicLinkValues = z.infer<typeof magicLinkSchema>

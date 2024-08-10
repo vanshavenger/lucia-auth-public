@@ -21,15 +21,21 @@ export async function sendEmail({
   to,
   subject,
   html,
+  headers,
+  text,
 }: {
   to: string
   subject: string
   html: string
+  headers?: Record<string, string>
+  text?: string
 }) {
   await transporter.sendMail({
     from: `${process.env.GMAIL_USER}`, // sender address
     to, // list of receivers
     subject, // Subject line
     html, // html body
+    text, // plain text body
+    headers,
   })
 }

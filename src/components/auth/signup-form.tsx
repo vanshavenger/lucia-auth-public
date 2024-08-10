@@ -29,6 +29,8 @@ import { GithubIcon } from '@/components/icons/github'
 
 import { GoogleIcon } from '@/components/icons/google'
 import { DiscordIcon } from '@/components/icons/discord'
+import Link from 'next/link'
+import { Mail } from 'lucide-react'
 
 export default function SignUpForm() {
   const [count, { startCountdown, stopCountdown, resetCountdown }] =
@@ -67,6 +69,7 @@ export default function SignUpForm() {
           return
         }
         toast.success('Account created successfully, Email verification sent!')
+        form.reset()
         setShowSendEmail(true)
       })
     })
@@ -84,6 +87,26 @@ export default function SignUpForm() {
 
   return (
     <div className='space-y-4 w-full max-w-md mx-auto'>
+      <Button
+        variant='secondary'
+        className='w-full flex items-center justify-center gap-2'
+        asChild
+      >
+        <Link href={'/magic-link'}>
+          <Mail className='w-5 h-5' />
+          Sign in with Magic Link
+        </Link>
+      </Button>
+      <div className='relative'>
+        <div className='absolute inset-0 flex items-center'>
+          <span className='w-full border-t' />
+        </div>
+        <div className='relative flex justify-center text-xs uppercase'>
+          <span className='bg-background px-2 text-muted-foreground'>
+            Or continue with
+          </span>
+        </div>
+      </div>
       <Button
         onClick={onDiscordSignInClicked}
         variant='secondary'

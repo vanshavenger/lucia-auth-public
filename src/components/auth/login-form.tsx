@@ -30,6 +30,8 @@ import { Button } from '@/components/ui/button'
 import { GithubIcon } from '@/components/icons/github'
 import { GoogleIcon } from '@/components/icons/google'
 import { DiscordIcon } from '@/components/icons/discord'
+import { Mail } from 'lucide-react'
+import Link from 'next/link'
 
 export default function LoginForm() {
   const [count, { startCountdown, stopCountdown, resetCountdown }] =
@@ -68,6 +70,7 @@ export default function LoginForm() {
         toast.error(data.error)
         return
       }
+      form.reset()
       toast.success('Logged in successfully!')
     })
   }
@@ -84,6 +87,26 @@ export default function LoginForm() {
 
   return (
     <div className='space-y-6 w-full max-w-md mx-auto'>
+      <Button
+        variant='secondary'
+        className='w-full flex items-center justify-center gap-2'
+        asChild
+      >
+        <Link href={'/magic-link'}>
+          <Mail className='w-5 h-5' />
+          Sign in with Magic Link
+        </Link>
+      </Button>
+      <div className='relative'>
+        <div className='absolute inset-0 flex items-center'>
+          <span className='w-full border-t' />
+        </div>
+        <div className='relative flex justify-center text-xs uppercase'>
+          <span className='bg-background px-2 text-muted-foreground'>
+            Or continue with
+          </span>
+        </div>
+      </div>
       <Button
         onClick={onDiscordSignInClicked}
         variant='secondary'
