@@ -1,8 +1,7 @@
-import { ForgetPasswordForm } from '@/components/auth/forget-password-form'
-import React from 'react'
+import { ResetPasswordForm } from '@/components/auth/reset-password-form'
 
 const Page = () => {
-  return <ForgetPasswordForm />
+  return <ResetPasswordForm />
 }
 
 export default Page

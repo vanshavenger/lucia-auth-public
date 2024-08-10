@@ -24,6 +24,7 @@ model User {
   sessions          Session[]
   VerificationEmail VerificationEmail[]
   twoFactorAuth     TwoFactorAuthentication?
+  passwordReset     PasswordResetToken?
 
   @@map("user")
 }
@@ -94,4 +95,16 @@ model MagicLink {
 
   @@index([userId])
   @@map("magic_link")
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("password_reset_token")
 }

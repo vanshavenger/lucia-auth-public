@@ -76,12 +76,11 @@ export const loginSchema = z.object({
 
 export type loginValues = z.infer<typeof loginSchema>
 
-export const forgetPasswordSchema = z
+export const resetPasswordSchema = z
   .object({
     password: z.string().trim().min(1, {
-      message: 'Password is required.',
+      message: 'Current password is required.',
     }),
-    confirmPassword: z.string().trim(),
     newPassword: z
       .string()
       .trim()
@@ -97,16 +96,18 @@ export const forgetPasswordSchema = z
           })
         })
       }),
+    confirmNewPassword: z.string().trim(),
   })
-  .refine((data) => data.password === data.confirmPassword, {
+  .refine((data) => data.newPassword === data.confirmNewPassword, {
     message: 'Passwords do not match',
-    path: ['confirmPassword'],
+    path: ['confirmNewPassword'],
   })
   .refine((data) => data.newPassword !== data.password, {
     message: 'New password must be different from the current password',
     path: ['newPassword'],
   })
-export type forgetPasswordValues = z.infer<typeof forgetPasswordSchema>
+
+export type ResetPasswordValues = z.infer<typeof resetPasswordSchema>
 
 export const magicLinkSchema = z.object({
   email: z.string().trim().email({
@@ -115,3 +116,31 @@ export const magicLinkSchema = z.object({
 })
 
 export type magicLinkValues = z.infer<typeof magicLinkSchema>
+
+export const newPasswordSchema = z.object({
+  password: z
+    .string()
+    .trim()
+    .superRefine((password, ctx) => {
+      const failedRequirements = passwordRequirements.filter(
+        (requirement) => !requirement.regex.test(password)
+      )
+
+      failedRequirements.forEach((requirement) => {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: requirement.message,
+        })
+      })
+    }),
+})
+
+export type newPasswordValues = z.infer<typeof newPasswordSchema>
+
+export const ResetSchema = z.object({
+  email: z.string().trim().email({
+    message: 'Invalid email address',
+  }),
+})
+
+export type ResetValues = z.infer<typeof ResetSchema>

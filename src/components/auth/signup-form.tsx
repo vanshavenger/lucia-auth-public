@@ -209,6 +209,7 @@ export default function SignUpForm() {
               </FormItem>
             )}
           />
+
           {showSendEmail && (
             <Button
               type='button'

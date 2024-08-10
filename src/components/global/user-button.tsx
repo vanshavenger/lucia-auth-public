@@ -6,10 +6,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { LogOutIcon, User } from 'lucide-react'
+import { LogOutIcon, User, User2 } from 'lucide-react'
 import { validateRequest } from '@/auth'
-import Image from 'next/image'
 import { LogoutButton } from '@/components/global/logout-button'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 
 export const UserButton = async () => {
   const user = await validateRequest()
@@ -17,17 +17,12 @@ export const UserButton = async () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger aria-label='user profile trigger'>
-        {user.user.imageUrl ? (
-          <Image
-            src={user.user.imageUrl}
-            alt='user-button'
-            className='rounded-full object-contain'
-            width={40}
-            height={40}
-          />
-        ) : (
-          <User size={35} className='border border-gray-500 rounded-full p-1' />
-        )}
+        <Avatar aria-label='user avatar'>
+          <AvatarImage alt='user-button' src={user.user.imageUrl ?? ''} />
+          <AvatarFallback className='bg-primary'>
+            <User2 className='text-white dark:text-black' />
+          </AvatarFallback>
+        </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent className='w-40' align='end'>
         <DropdownMenuLabel>My Account</DropdownMenuLabel>

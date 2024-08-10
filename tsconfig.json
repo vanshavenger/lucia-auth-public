@@ -27,7 +27,8 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "src/app/(auth)/register/page.tsx",
-    "src/app/(main)/reset-password"
+    "src/app/(main)/reset-password",
+    "src/app/(auth)/auth-reset-password"
   ],
   "exclude": ["node_modules"]
 }

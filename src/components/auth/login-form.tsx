@@ -171,6 +171,15 @@ export default function LoginForm() {
               </FormItem>
             )}
           />
+          <div className='flex justify-end text-sm'>
+            <Link
+              href='/auth-reset-password'
+              className='text-primary hover:underline'
+            >
+              Forgot password?
+            </Link>
+          </div>
+
           {showSendEmail && (
             <Button
               type='button'
