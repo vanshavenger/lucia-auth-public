@@ -103,6 +103,7 @@ This project is licensed under the MIT License!
 
 - [Lucia Auth](https://lucia-auth.com/) for the excellent authentication library.
 - All contributors and supporters of this project.
+- https://youtu.be/JIIy7VkiTqU?si=iN4TvzF62KJOVt2V - Reference video + Lucia Docs and github discussions to get the best practices
 
 ## Contact
 
