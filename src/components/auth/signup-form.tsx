@@ -1,7 +1,18 @@
 'use client'
 
+import React, { useEffect, useState, useTransition } from 'react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useCountdown } from 'usehooks-ts'
+import { toast } from 'sonner'
 import { signUp } from '@/actions/auth-actions'
 import { resendVerificationEmail } from '@/actions/email'
+import {
+  onDiscordSignInClicked,
+  onGithubSignInClicked,
+  onGoogleSignInClicked,
+} from '@/queries'
+import { signUpSchema, signUpValues } from '@/schemas'
 import LoadingButton from '@/components/global/loading-button'
 import { PasswordInput } from '@/components/global/password-input'
 import {
@@ -13,24 +24,21 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { signUpSchema, signUpValues } from '@/schemas'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useEffect, useState, useTransition } from 'react'
-import { useForm } from 'react-hook-form'
-import { toast } from 'sonner'
-import { useCountdown } from 'usehooks-ts'
 import { Button } from '@/components/ui/button'
-import {
-  onDiscordSignInClicked,
-  onGithubSignInClicked,
-  onGoogleSignInClicked,
-} from '@/queries'
 import { GithubIcon } from '@/components/icons/github'
-
 import { GoogleIcon } from '@/components/icons/google'
 import { DiscordIcon } from '@/components/icons/discord'
+import { Mail, UserPlus } from 'lucide-react'
 import Link from 'next/link'
-import { Mail } from 'lucide-react'
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from '@/components/ui/card'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 export default function SignUpForm() {
   const [count, { startCountdown, stopCountdown, resetCountdown }] =
@@ -38,17 +46,8 @@ export default function SignUpForm() {
       countStart: 60,
       intervalMs: 1000,
     })
-
-  useEffect(() => {
-    if (count === 0) {
-      stopCountdown()
-      resetCountdown()
-    }
-  }, [count, resetCountdown, stopCountdown])
-
+  const [showSendEmail, setShowSendEmail] = useState(false)
   const [isPending, startTransition] = useTransition()
-
-  const [showSendEmail, setShowSendEmail] = useState<boolean>(false)
 
   const form = useForm<signUpValues>({
     resolver: zodResolver(signUpSchema),
@@ -60,6 +59,13 @@ export default function SignUpForm() {
       confirmPassword: '',
     },
   })
+
+  useEffect(() => {
+    if (count === 0) {
+      stopCountdown()
+      resetCountdown()
+    }
+  }, [count, resetCountdown, stopCountdown])
 
   async function onSubmit(values: signUpValues) {
     startTransition(() => {
@@ -86,146 +92,134 @@ export default function SignUpForm() {
   }
 
   return (
-    <div className='space-y-4 w-full max-w-md mx-auto'>
-      <Button
-        variant='secondary'
-        className='w-full flex items-center justify-center gap-2'
-        asChild
-      >
-        <Link href={'/magic-link'}>
-          <Mail className='w-5 h-5' />
-          Sign in with Magic Link
-        </Link>
-      </Button>
-      <div className='relative'>
-        <div className='absolute inset-0 flex items-center'>
-          <span className='w-full border-t' />
+    <Card className='w-full max-w-md mx-auto'>
+      <CardHeader>
+        <div className='flex items-center space-x-2'>
+          <UserPlus className='w-6 h-6 text-primary' />
+          <CardTitle>Sign Up</CardTitle>
         </div>
-        <div className='relative flex justify-center text-xs uppercase'>
-          <span className='bg-background px-2 text-muted-foreground'>
-            Or continue with
-          </span>
-        </div>
-      </div>
-      <Button
-        onClick={onDiscordSignInClicked}
-        variant='secondary'
-        className='w-full flex items-center justify-center gap-2'
-      >
-        <DiscordIcon className='w-5 h-5' />
-        Sign in with Discord
-      </Button>
-      <Button
-        onClick={onGithubSignInClicked}
-        variant='secondary'
-        className='w-full flex items-center justify-center gap-2'
-      >
-        <GithubIcon className='w-5 h-5' />
-        Sign up with GitHub
-      </Button>
-      <Button
-        onClick={onGoogleSignInClicked}
-        variant='secondary'
-        className='w-full flex items-center justify-center gap-2'
-      >
-        <GoogleIcon className='w-5 h-5' />
-        Sign up with Google
-      </Button>
-
-      <div className='relative'>
-        <div className='absolute inset-0 flex items-center'>
-          <span className='w-full border-t' />
-        </div>
-        <div className='relative flex justify-center text-xs uppercase'>
-          <span className='bg-background px-2 text-muted-foreground'>
-            Or continue with
-          </span>
-        </div>
-      </div>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
-          <FormField
-            control={form.control}
-            name='displayName'
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Display Name</FormLabel>
-                <FormControl>
-                  <Input placeholder='Vansh Chopra' {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name='username'
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Username</FormLabel>
-                <FormControl>
-                  <Input placeholder='Username' {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name='email'
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input placeholder='example@gmail.com' {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name='password'
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Password</FormLabel>
-                <FormControl>
-                  <PasswordInput placeholder='********' {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name='confirmPassword'
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Confirm Password</FormLabel>
-                <FormControl>
-                  <PasswordInput placeholder='********' {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {showSendEmail && (
-            <Button
-              type='button'
-              disabled={count > 0 && count < 60}
-              onClick={onResendVerificationEmail}
-              variant={'linkHover2'}
-            >
-              Send verification email{' '}
-              {count > 0 && count < 60 && `in ${count}s`}
-            </Button>
-          )}
-          <LoadingButton loading={isPending} type='submit' className='w-full'>
-            Create account
-          </LoadingButton>
-        </form>
-      </Form>
-    </div>
+        <CardDescription>
+          Create a new account or sign up using your preferred method
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Tabs defaultValue='email'>
+          <TabsList className='grid w-full grid-cols-2'>
+            <TabsTrigger value='email'>Email</TabsTrigger>
+            <TabsTrigger value='social'>Social</TabsTrigger>
+          </TabsList>
+          <TabsContent value='email'>
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className='space-y-4'
+              >
+                {[
+                  'displayName',
+                  'username',
+                  'email',
+                  'password',
+                  'confirmPassword',
+                ].map((fieldName) => (
+                  <FormField
+                    key={fieldName}
+                    control={form.control}
+                    name={fieldName as keyof signUpValues}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          {fieldName === 'displayName'
+                            ? 'Display Name'
+                            : fieldName === 'confirmPassword'
+                              ? 'Confirm Password'
+                              : fieldName.charAt(0).toUpperCase() +
+                                fieldName.slice(1)}
+                        </FormLabel>
+                        <FormControl>
+                          {fieldName.includes('password') ? (
+                            <PasswordInput placeholder='********' {...field} />
+                          ) : (
+                            <Input
+                              placeholder={
+                                fieldName === 'displayName'
+                                  ? 'John Doe'
+                                  : fieldName === 'email'
+                                    ? 'example@gmail.com'
+                                    : fieldName
+                              }
+                              {...field}
+                            />
+                          )}
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                ))}
+                {showSendEmail && (
+                  <Button
+                    type='button'
+                    disabled={count > 0 && count < 60}
+                    onClick={onResendVerificationEmail}
+                    variant='link'
+                    className='p-0 h-auto font-normal text-xs'
+                  >
+                    Send verification email{' '}
+                    {count > 0 && count < 60 && `in ${count}s`}
+                  </Button>
+                )}
+                <LoadingButton
+                  loading={isPending}
+                  type='submit'
+                  className='w-full'
+                >
+                  Create account
+                </LoadingButton>
+              </form>
+            </Form>
+          </TabsContent>
+          <TabsContent value='social'>
+            <div className='space-y-4'>
+              <Button
+                onClick={onDiscordSignInClicked}
+                variant='outline'
+                className='w-full flex items-center justify-center gap-2'
+              >
+                <DiscordIcon className='w-5 h-5' />
+                Sign up with Discord
+              </Button>
+              <Button
+                onClick={onGithubSignInClicked}
+                variant='outline'
+                className='w-full flex items-center justify-center gap-2'
+              >
+                <GithubIcon className='w-5 h-5' />
+                Sign up with GitHub
+              </Button>
+              <Button
+                onClick={onGoogleSignInClicked}
+                variant='outline'
+                className='w-full flex items-center justify-center gap-2'
+              >
+                <GoogleIcon className='w-5 h-5' />
+                Sign up with Google
+              </Button>
+            </div>
+          </TabsContent>
+        </Tabs>
+      </CardContent>
+      <CardFooter>
+        <Button
+          variant='link'
+          className='w-full flex items-center justify-center gap-2'
+          asChild
+        >
+          <Link href='/magic-link'>
+            <Mail className='w-5 h-5' />
+            Sign up with Magic Link
+          </Link>
+        </Button>
+      </CardFooter>
+    </Card>
   )
 }

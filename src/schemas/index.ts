@@ -2,8 +2,8 @@ import * as z from 'zod'
 
 const passwordRequirements = [
   {
-    regex: /^.{12,}$/,
-    message: 'Password must be at least 12 characters long',
+    regex: /^.{8,}$/,
+    message: 'Password must be exactly 8 characters long',
   },
   {
     regex: /[a-z]/,
@@ -21,24 +21,36 @@ const passwordRequirements = [
     regex: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/,
     message: 'Password must contain at least one special character',
   },
+  {
+    regex: /^(?!.*(.)\1{2,}).*$/,
+    message:
+      'Password must not contain repeating characters more than twice in a row',
+  },
+  {
+    regex: /^(?!.*(?:password|12345678|abcdefgh|qwertyui)).*$/i,
+    message: 'Password must not be a common pattern',
+  },
 ]
+
+const usernameRegex = /^[a-zA-Z0-9_-]{3,30}$/
+const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
 
 export const signUpSchema = z
   .object({
-    displayName: z.string().trim().min(1, {
-      message: 'Display name must be at least 1 character',
-    }),
-    username: z
+    displayName: z
       .string()
       .trim()
-      .min(3, {
-        message: 'Username must be at least 3 characters long',
+      .min(2, {
+        message: 'Display name must be at least 2 characters',
       })
-      .regex(/^[a-zA-Z0-9_-]+$/, {
-        message:
-          'Username can only contain letters, numbers, underscores, and hyphens',
+      .max(50, {
+        message: 'Display name must not exceed 50 characters',
       }),
-    email: z.string().trim().email({
+    username: z.string().trim().regex(usernameRegex, {
+      message:
+        'Username must be 3-30 characters long and can only contain letters, numbers, underscores, and hyphens',
+    }),
+    email: z.string().trim().regex(emailRegex, {
       message: 'Invalid email address',
     }),
     password: z
@@ -78,8 +90,8 @@ export type loginValues = z.infer<typeof loginSchema>
 
 export const resetPasswordSchema = z
   .object({
-    password: z.string().trim().min(1, {
-      message: 'Current password is required.',
+    password: z.string().trim().length(8, {
+      message: 'Current password must be exactly 8 characters long.',
     }),
     newPassword: z
       .string()
@@ -144,3 +156,21 @@ export const ResetSchema = z.object({
 })
 
 export type ResetValues = z.infer<typeof ResetSchema>
+
+export const updateUserDetailsSchema = z.object({
+  displayName: z.string().trim().min(1, {
+    message: 'Display name must be at least 1 character',
+  }),
+  username: z
+    .string()
+    .trim()
+    .min(3, {
+      message: 'Username must be at least 3 characters long',
+    })
+    .regex(/^[a-zA-Z0-9_-]+$/, {
+      message:
+        'Username can only contain letters, numbers, underscores, and hyphens',
+    }),
+})
+
+export type UpdateUserDetailsValues = z.infer<typeof updateUserDetailsSchema>

@@ -48,6 +48,8 @@ model OAuthAccount {
   accessToken    String
   refreshToken   String?
   expiresAt      DateTime?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
   user           User        @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([provider, providerUserId])
@@ -91,12 +93,12 @@ model MagicLink {
   userId    String
   token     String
   expiresAt DateTime
+  createdAt DateTime @default(now())
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@map("magic_link")
 }
-
 model PasswordResetToken {
   id        String   @id @default(cuid())
   userId    String   @unique

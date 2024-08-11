@@ -37,6 +37,33 @@ export const signIn = async (values: z.infer<typeof magicLinkSchema>) => {
     })
 
     if (existedUser) {
+      // Check if a magic link has been sent within the last 60 seconds
+      const recentMagicLink = await db.magicLink.findFirst({
+        where: {
+          userId: existedUser.id,
+          createdAt: {
+            gte: new Date(Date.now() - 60 * 1000),
+          },
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+      })
+
+      if (recentMagicLink) {
+        const timeElapsed =
+          (Date.now() - new Date(recentMagicLink.createdAt).getTime()) / 1000
+        const timeLeft = 60 - timeElapsed
+
+        return {
+          success: false,
+          message: `Magic link was already sent recently. Please wait ${Math.ceil(
+            timeLeft
+          )} seconds before trying again.`,
+          data: null,
+        }
+      }
+
       const res = await generateMagicLink(values.email, existedUser.id)
       await db.magicLink.create({
         data: {
@@ -50,7 +77,7 @@ export const signIn = async (values: z.infer<typeof magicLinkSchema>) => {
 
       console.log(res.data)
     } else {
-      // we will create the user
+      // Create the user
       const createdUser = await db.user.create({
         data: {
           email: values.email,

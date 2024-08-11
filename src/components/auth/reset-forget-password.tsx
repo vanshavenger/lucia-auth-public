@@ -1,11 +1,10 @@
 'use client'
 
-import * as z from 'zod'
+import React, { useState, useTransition, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import { useState, useTransition, useEffect } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { ResetSchema } from '@/schemas'
-import { Input } from '@/components/ui/input'
+import * as z from 'zod'
+import { toast } from 'sonner'
 import {
   Form,
   FormControl,
@@ -14,8 +13,18 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
-import { toast } from 'sonner'
-import LoadingButton from '@/components/global/loading-button'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from '@/components/ui/card'
+import { LockKeyhole } from 'lucide-react'
+import { ResetSchema } from '@/schemas'
 import { reset } from '@/actions/reset-forget'
 
 export const ResetForm = () => {
@@ -58,37 +67,51 @@ export const ResetForm = () => {
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6'>
-        <div className='space-y-4'>
-          <FormField
-            control={form.control}
-            name='email'
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input
-                    {...field}
-                    disabled={isPending || countdown > 0}
-                    placeholder='john.doe@example.com'
-                    type='email'
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+    <Card className='w-full max-w-md mx-auto mt-24'>
+      <CardHeader>
+        <div className='flex items-center space-x-2'>
+          <LockKeyhole className='w-6 h-6 text-primary' />
+          <CardTitle>Reset Password</CardTitle>
         </div>
-        <LoadingButton
-          loading={isPending}
+        <CardDescription>
+          Enter your email address to receive a password reset link.
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
+            <FormField
+              control={form.control}
+              name='email'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      disabled={isPending || countdown > 0}
+                      placeholder='john.doe@example.com'
+                      type='email'
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </form>
+        </Form>
+      </CardContent>
+      <CardFooter>
+        <Button
+          onClick={form.handleSubmit(onSubmit)}
           disabled={isPending || countdown > 0}
-          type='submit'
           className='w-full'
         >
           {countdown > 0 ? `Resend in ${countdown}s` : 'Send reset email'}
-        </LoadingButton>
-      </form>
-    </Form>
+        </Button>
+      </CardFooter>
+    </Card>
   )
 }
+
+export default ResetForm

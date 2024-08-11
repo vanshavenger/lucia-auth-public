@@ -22,6 +22,18 @@ export const NavbarCenter = () => {
             Reset Password
           </Link>
         </Button>
+        <Button
+          key={'/update-details'}
+          variant={'ghost'}
+          className={cn('font-bold !capitalize', {
+            'text-primary  font-bold ': pathname === '/reset-password',
+          })}
+          asChild
+        >
+          <Link href={'/update-details'} scroll={false}>
+            Update your details
+          </Link>
+        </Button>
       </div>
     </nav>
   )

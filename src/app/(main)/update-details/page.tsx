@@ -1,7 +1,8 @@
+import UpdateUserDetailsForm from '@/components/auth/update-user-details'
 import React from 'react'
 
 const UpdateYourDetails = () => {
-  return <div>UpdateYourDetails</div>
+  return <UpdateUserDetailsForm />
 }
 
 export default UpdateYourDetails

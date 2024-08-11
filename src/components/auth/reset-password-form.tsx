@@ -26,10 +26,19 @@ import {
 import { PasswordInput } from '@/components/global/password-input'
 import { resetPasswordSchema, ResetPasswordValues } from '@/schemas'
 import { resetPassword } from '@/actions/reset-password'
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from '@/components/ui/card'
+import { LockKeyhole } from 'lucide-react'
 
 export const ResetPasswordForm = () => {
-  const [open, setOpen] = useState<boolean>(false)
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
+  const [open, setOpen] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const form = useForm<ResetPasswordValues>({
     resolver: zodResolver(resetPasswordSchema),
@@ -81,40 +90,57 @@ export const ResetPasswordForm = () => {
         </AlertDialogContent>
       </AlertDialog>
 
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className='space-y-4 max-w-md mx-auto mt-8'
-        >
-          {['password', 'newPassword', 'confirmNewPassword'].map(
-            (fieldName) => (
-              <FormField
-                key={fieldName}
-                control={form.control}
-                name={fieldName as keyof ResetPasswordValues}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      {fieldName === 'password'
-                        ? 'Current Password'
-                        : fieldName === 'newPassword'
-                          ? 'New Password'
-                          : 'Confirm New Password'}
-                    </FormLabel>
-                    <FormControl>
-                      <PasswordInput {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            )
-          )}
-          <Button type='submit' className='w-full'>
+      <Card className='w-full max-w-md mx-auto mt-24'>
+        <CardHeader>
+          <div className='flex items-center space-x-2'>
+            <LockKeyhole className='w-6 h-6 text-primary' />
+            <CardTitle>Reset Password</CardTitle>
+          </div>
+          <CardDescription>
+            Enter your current password and choose a new one to update your
+            account security.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
+              {['password', 'newPassword', 'confirmNewPassword'].map(
+                (fieldName) => (
+                  <FormField
+                    key={fieldName}
+                    control={form.control}
+                    name={fieldName as keyof ResetPasswordValues}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          {fieldName === 'password'
+                            ? 'Current Password'
+                            : fieldName === 'newPassword'
+                              ? 'New Password'
+                              : 'Confirm New Password'}
+                        </FormLabel>
+                        <FormControl>
+                          <PasswordInput {...field} className='w-full' />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )
+              )}
+            </form>
+          </Form>
+        </CardContent>
+        <CardFooter>
+          <Button
+            type='submit'
+            className='w-full'
+            onClick={form.handleSubmit(onSubmit)}
+          >
             Update Password
           </Button>
-        </form>
-      </Form>
+        </CardFooter>
+      </Card>
     </>
   )
 }

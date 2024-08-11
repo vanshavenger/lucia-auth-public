@@ -10,69 +10,60 @@ import { ARGON2_OPTIONS } from '@/constants'
 
 export const resetPassword = async (
   values: z.infer<typeof resetPasswordSchema>
-) => {
+): Promise<{ success: boolean; message: string }> => {
   try {
-    const res = resetPasswordSchema.safeParse(values)
-    if (!res.success) {
-      return {
-        success: false,
-        message: res.error.errors[0].message,
-      }
-    }
+    const validatedData = resetPasswordSchema.parse(values)
 
     const { user } = await validateRequest()
     if (!user) {
       return {
         success: false,
-        message: 'User not found',
+        message: 'Unauthorized access',
       }
     }
 
-    const existedUser = await db.user.findUnique({
-      where: {
-        id: user.id,
-      },
+    const existingUser = await db.user.findUnique({
+      where: { id: user.id },
+      select: { id: true, hashedPassword: true },
     })
 
-    if (!existedUser) {
+    if (!existingUser || !existingUser.hashedPassword) {
       return {
         success: false,
-        message: 'User not found',
+        message: 'User not found or password not set',
       }
     }
 
     const isValidPassword = await verify(
-      existedUser.hashedPassword!,
-      values.password,
+      existingUser.hashedPassword,
+      validatedData.password,
       ARGON2_OPTIONS
     )
 
     if (!isValidPassword) {
       return {
         success: false,
-        message: 'Invalid password',
+        message: 'Current password is incorrect',
       }
     }
 
-    const passwordHash = await hash(values.newPassword, ARGON2_OPTIONS)
+    const newPasswordHash = await hash(
+      validatedData.newPassword,
+      ARGON2_OPTIONS
+    )
 
-    await db.user.update({
-      where: {
-        id: user.id,
-      },
-      data: {
-        hashedPassword: passwordHash,
-      },
-    })
+    await db.$transaction([
+      db.user.update({
+        where: { id: user.id },
+        data: { hashedPassword: newPasswordHash },
+      }),
+      db.session.deleteMany({
+        where: { userId: user.id },
+      }),
+    ])
 
-    await db.session.deleteMany({
-      where: {
-        userId: user.id,
-      },
-    })
-
-    const session = await lucia.createSession(existedUser.id, {})
-    const sessionCookie = lucia.createSessionCookie(session.id)
+    const newSession = await lucia.createSession(existingUser.id, {})
+    const sessionCookie = lucia.createSessionCookie(newSession.id)
     cookies().set(
       sessionCookie.name,
       sessionCookie.value,
@@ -81,12 +72,19 @@ export const resetPassword = async (
 
     return {
       success: true,
-      message: 'Password updated',
+      message: 'Password updated successfully',
     }
-  } catch (error: any) {
+  } catch (error) {
+    console.error('Password reset error:', error)
+    if (error instanceof z.ZodError) {
+      return {
+        success: false,
+        message: error.errors[0].message,
+      }
+    }
     return {
       success: false,
-      message: error.message,
+      message: 'An unexpected error occurred',
     }
   }
 }
