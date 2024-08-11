@@ -30,7 +30,7 @@ A robust and feature-rich authentication system built with Lucia, offering vario
 1. Clone the repository:
 
    ```
-   git clone https://github.com/vanshavenger/lucia-auth-system.git
+   git clone https://github.com/vanshavenger/lucia-auth-public.git
    cd lucia-auth-system
    ```
 
