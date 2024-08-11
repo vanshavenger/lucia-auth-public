@@ -6,6 +6,7 @@ import { resetPasswordSchema } from '@/schemas'
 import { lucia, validateRequest } from '@/auth'
 import db from '@/lib/db'
 import { hash, verify } from '@node-rs/argon2'
+import { ARGON2_OPTIONS } from '@/constants'
 
 export const resetPassword = async (
   values: z.infer<typeof resetPasswordSchema>
@@ -43,11 +44,7 @@ export const resetPassword = async (
     const isValidPassword = await verify(
       existedUser.hashedPassword!,
       values.password,
-      {
-        memoryCost: 19456,
-        timeCost: 2,
-        parallelism: 1,
-      }
+      ARGON2_OPTIONS
     )
 
     if (!isValidPassword) {
@@ -57,11 +54,7 @@ export const resetPassword = async (
       }
     }
 
-    const passwordHash = await hash(values.newPassword, {
-      memoryCost: 19456,
-      timeCost: 2,
-      parallelism: 1,
-    })
+    const passwordHash = await hash(values.newPassword, ARGON2_OPTIONS)
 
     await db.user.update({
       where: {

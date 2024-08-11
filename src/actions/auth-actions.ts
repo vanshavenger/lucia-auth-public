@@ -9,6 +9,7 @@ import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import jwt from 'jsonwebtoken'
 import { sendVerificationEmail } from '@/actions/email'
+import { ARGON2_OPTIONS } from '@/constants'
 
 export const signUp = async (values: signUpValues) => {
   try {
@@ -20,12 +21,7 @@ export const signUp = async (values: signUpValues) => {
     }
 
     const { username, password, email, displayName } = data.data
-    const passwordHash = await hash(password, {
-      memoryCost: 19456,
-      timeCost: 2,
-      outputLen: 32,
-      parallelism: 1,
-    })
+    const passwordHash = await hash(password, ARGON2_OPTIONS)
 
     const existingUsername = await db.user.findFirst({
       where: {
@@ -122,12 +118,11 @@ export const login = async (values: loginValues) => {
       }
     }
 
-    const validPassword = await verify(user.hashedPassword, password, {
-      memoryCost: 19456,
-      timeCost: 2,
-      outputLen: 32,
-      parallelism: 1,
-    })
+    const validPassword = await verify(
+      user.hashedPassword,
+      password,
+      ARGON2_OPTIONS
+    )
 
     if (!validPassword) {
       return {
